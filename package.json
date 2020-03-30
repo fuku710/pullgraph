@@ -1,0 +1,16 @@
+{
+  "name": "pullgraph",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "exec": "node index.js",
+    "csv": "node index.js > result.csv"
+  },
+  "author": "Fukuda Naoto",
+  "license": "MIT",
+  "dependencies": {
+    "node-fetch": "^2.6.0",
+    "parse-link-header": "^1.0.1"
+  }
+}
