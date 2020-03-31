@@ -1,7 +1,8 @@
 {
   "accessToken": "GITHUB_ACCESS_TOKEN",
   "repos": ["OWNER/REPO"],
-  "assignee": "USER",
+  "author": "USERNAME",
+  "assignee": "USERNAME",
   "beginDate": "2019-01-01",
   "endDate": "2020-12-31"
 }
