@@ -3,16 +3,25 @@ const parse = require('parse-link-header')
 
 const config = require('./config.json')
 
+const token = config.accessToken || null
 const repos = config.repos || []
-const token = config.accessToken || ''
-const assignee = config.assignee || ''
+const author = config.author || null
+const assignee = config.assignee || null
 const beginDate = config.beginDate || '*'
 const endDate = config.endDate || '*'
 
 ;(async () => {
   let results = []
   for (const repo of repos) {
-    let url = `https://api.github.com/search/issues?q=type:pr+assignee:${assignee}+repo:${repo}+created:${beginDate}..${endDate}`
+    const query = buildSearchQuery({
+      type: 'pr',
+      repo,
+      author,
+      assignee,
+      beginDate,
+      endDate
+    })
+    let url = `https://api.github.com/search/issues?q=${query}`
     const options = {
       headers: { Authorization: `token ${token}` }
     }
@@ -22,7 +31,9 @@ const endDate = config.endDate || '*'
       const json = await res.json()
       results = [
         ...results,
-        ...json.items.map(item => `${repo},${item.title},${item.created_at}`)
+        ...json.items.map(
+          item => `${repo},${item.title},${item.state},${item.created_at}`
+        )
       ]
       if (link && link.next) {
         url = link.next.url
@@ -31,6 +42,24 @@ const endDate = config.endDate || '*'
       }
     } while (url)
   }
-  console.log('repository,title,created_at')
   results.forEach(result => console.log(result))
+  console.log(results.length)
 })()
+
+function buildSearchQuery({
+  type,
+  repo,
+  author,
+  assignee,
+  beginDate,
+  endDate
+}) {
+  let query = ''
+  if (type) query += `+type:${type}`
+  if (repo) query += `+repo:${repo}`
+  if (author) query += `+author:${author}`
+  if (assignee) query += `+assignee:${assignee}`
+  if (beginDate && endDate) query += `+created:${beginDate}..${endDate}`
+  if (query[0] === '+') query.slice(1, -1)
+  return query
+}
