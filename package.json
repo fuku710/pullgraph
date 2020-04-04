@@ -4,12 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "exec": "node index.js",
-    "csv": "node index.js > result.csv"
+    "start": "node src/server.js"
   },
   "author": "Fukuda Naoto",
   "license": "MIT",
   "dependencies": {
+    "express": "^4.17.1",
     "node-fetch": "^2.6.0",
     "parse-link-header": "^1.0.1"
   }

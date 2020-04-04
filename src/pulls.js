@@ -1,7 +1,7 @@
 const fetch = require('node-fetch')
 const parse = require('parse-link-header')
 
-const config = require('./config.json')
+const config = require('../config.json')
 
 const token = config.accessToken || null
 const repos = config.repos || []
@@ -10,7 +10,7 @@ const assignee = config.assignee || null
 const beginDate = config.beginDate || '*'
 const endDate = config.endDate || '*'
 
-;(async () => {
+async function fetchPulls() {
   let results = []
   for (const repo of repos) {
     const query = buildSearchQuery({
@@ -29,12 +29,12 @@ const endDate = config.endDate || '*'
       const res = await fetch(url, options)
       const link = parse(res.headers.get('link'))
       const json = await res.json()
-      results = [
-        ...results,
-        ...json.items.map(
-          item => `${repo},${item.title},${item.state},${item.created_at}`
-        )
-      ]
+      const items = json.items.map(item => ({
+        repo,
+        title: item.title,
+        createdAt: item.created_at
+      }))
+      results = [...results, ...items]
       if (link && link.next) {
         url = link.next.url
       } else {
@@ -42,9 +42,8 @@ const endDate = config.endDate || '*'
       }
     } while (url)
   }
-  results.forEach(result => console.log(result))
-  console.log(results.length)
-})()
+  return results
+}
 
 function buildSearchQuery({
   type,
@@ -63,3 +62,5 @@ function buildSearchQuery({
   if (query[0] === '+') query.slice(1, -1)
   return query
 }
+
+module.exports = fetchPulls
