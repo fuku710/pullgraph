@@ -20,6 +20,7 @@
     "chart.js": "^2.9.3",
     "core-js": "^3.6.4",
     "electron": "^8.2.0",
+    "electron-store": "^5.1.1",
     "express": "^4.17.1",
     "node-fetch": "^2.6.0",
     "parse-link-header": "^1.0.1",

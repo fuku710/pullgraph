@@ -1,17 +1,9 @@
 import fetch from 'node-fetch'
 import parse from 'parse-link-header'
 
-import config from '../config.json'
-
-const token = config.accessToken || null
-const repos = config.repos || []
-const author = config.author || null
-const assignee = config.assignee || null
-const beginDate = config.beginDate || '*'
-const endDate = config.endDate || '*'
-
-export async function fetchPulls() {
+export async function fetchPulls(token, repos, author, beginDate, endDate) {
   let results = []
+  const assignee = author
   for (const repo of repos) {
     const query = buildSearchQuery({
       type: 'pr',
