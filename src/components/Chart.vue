@@ -64,24 +64,21 @@ export default {
   },
   watch: {
     labels() {
-      this.refreshChart()
+      this.createChart()
     },
     datasets() {
-      this.refreshChart()
+      this.createChart()
     },
     bgColors() {
-      this.chart.data.datasets = this.datasets.map((dataset, index) => ({
-        ...dataset,
-        backgroundColor: this.bgColors[index]
-      }))
-      this.chart.update()
+      this.updateChartColor()
     }
   },
   mounted() {
-    this.refreshChart()
+    this.createChart()
+    this.updateChartColor()
   },
   methods: {
-    refreshChart() {
+    createChart() {
       const ctx = document.getElementById('chart').getContext('2d')
       this.chart = new Chart(ctx, {
         type: 'bar',
@@ -91,6 +88,13 @@ export default {
         },
         options: this.options
       })
+    },
+    updateChartColor() {
+      this.chart.data.datasets = this.datasets.map((dataset, index) => ({
+        ...dataset,
+        backgroundColor: this.bgColors[index]
+      }))
+      this.chart.update()
     }
   }
 }

@@ -29,7 +29,7 @@ export default {
       repos: config.repos,
       beginDate: config.beginDate,
       endDate: config.endDate,
-      bgColors: ['#999999', '#999999', '#999999']
+      bgColors: config.repos.map(() => this.getRandomColorCode())
     }
   },
   mounted: async function() {
