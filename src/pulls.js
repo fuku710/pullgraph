@@ -1,7 +1,7 @@
-const fetch = require('node-fetch')
-const parse = require('parse-link-header')
+import fetch from 'node-fetch'
+import parse from 'parse-link-header'
 
-const config = require('../config.json')
+import config from '../config.json'
 
 const token = config.accessToken || null
 const repos = config.repos || []
@@ -10,7 +10,7 @@ const assignee = config.assignee || null
 const beginDate = config.beginDate || '*'
 const endDate = config.endDate || '*'
 
-async function fetchPulls() {
+export async function fetchPulls() {
   let results = []
   for (const repo of repos) {
     const query = buildSearchQuery({
@@ -19,20 +19,20 @@ async function fetchPulls() {
       author,
       assignee,
       beginDate,
-      endDate
+      endDate,
     })
     let url = `https://api.github.com/search/issues?q=${query}`
     const options = {
-      headers: { Authorization: `token ${token}` }
+      headers: { Authorization: `token ${token}` },
     }
     do {
       const res = await fetch(url, options)
       const link = parse(res.headers.get('link'))
       const json = await res.json()
-      const items = json.items.map(item => ({
+      const items = json.items.map((item) => ({
         repo,
         title: item.title,
-        createdAt: item.created_at
+        createdAt: item.created_at,
       }))
       results = [...results, ...items]
       if (link && link.next) {
@@ -51,7 +51,7 @@ function buildSearchQuery({
   author,
   assignee,
   beginDate,
-  endDate
+  endDate,
 }) {
   let query = ''
   if (type) query += `+type:${type}`
@@ -62,5 +62,3 @@ function buildSearchQuery({
   if (query[0] === '+') query.slice(1, -1)
   return query
 }
-
-module.exports = fetchPulls
