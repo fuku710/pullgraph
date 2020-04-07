@@ -1,18 +1,20 @@
 <template>
   <div>
     <canvas id="chart"></canvas>
+    <button @click="downloadChart">download</button>
   </div>
 </template>
 <script>
 import Chart from 'chart.js'
+import { remote } from 'electron'
+import fs from 'fs'
 
 export default {
   props: {
     pulls: { type: Array, required: true },
     repos: { type: Array, required: true },
     beginDate: { type: String, required: true },
-    endDate: { type: String, required: true },
-    bgColors: { type: Array, required: true }
+    endDate: { type: String, required: true }
   },
   data() {
     return {
@@ -52,30 +54,29 @@ export default {
           return this.pulls.filter(pull => {
             const createdYearMonth =
               pull.createdAt.split('-')[0] + pull.createdAt.split('-')[1]
-            return repo === pull.repo && label === createdYearMonth
+            return repo.name === pull.repo && label === createdYearMonth
           }).length
         })
         return {
-          label: repo,
-          data: data
+          label: repo.name,
+          data: data,
+          backgroundColor: repo.color
         }
       })
     }
   },
   watch: {
     labels() {
-      this.createChart()
+      this.chart.data.labels = this.labels
+      this.chart.update()
     },
     datasets() {
-      this.createChart()
-    },
-    bgColors() {
-      this.updateChartColor()
+      this.chart.data.datasets = this.datasets
+      this.chart.update()
     }
   },
   mounted() {
     this.createChart()
-    this.updateChartColor()
   },
   methods: {
     createChart() {
@@ -89,12 +90,20 @@ export default {
         options: this.options
       })
     },
-    updateChartColor() {
-      this.chart.data.datasets = this.datasets.map((dataset, index) => ({
-        ...dataset,
-        backgroundColor: this.bgColors[index]
-      }))
-      this.chart.update()
+    async downloadChart() {
+      const base64 = document
+        .getElementById('chart')
+        .toDataURL('image/png')
+        .replace('data:image/png;base64,', '')
+      const { filePath, canceled } = await remote.dialog.showSaveDialog({
+        title: 'Save graph',
+        defaultPath: 'graph.png'
+      })
+      if (!canceled) {
+        fs.writeFile(filePath, base64, { encoding: 'base64' }, err => {
+          console.log(err)
+        })
+      }
     }
   }
 }

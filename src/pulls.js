@@ -3,13 +3,11 @@ import parse from 'parse-link-header'
 
 export async function fetchPulls(token, repos, author, beginDate, endDate) {
   let results = []
-  const assignee = author
   for (const repo of repos) {
     const query = buildSearchQuery({
       type: 'pr',
-      repo,
+      repo: repo.name,
       author,
-      assignee,
       beginDate,
       endDate,
     })
@@ -22,7 +20,7 @@ export async function fetchPulls(token, repos, author, beginDate, endDate) {
       const link = parse(res.headers.get('link'))
       const json = await res.json()
       const items = json.items.map((item) => ({
-        repo,
+        repo: repo.name,
         title: item.title,
         createdAt: item.created_at,
       }))
@@ -37,19 +35,11 @@ export async function fetchPulls(token, repos, author, beginDate, endDate) {
   return results
 }
 
-function buildSearchQuery({
-  type,
-  repo,
-  author,
-  assignee,
-  beginDate,
-  endDate,
-}) {
+function buildSearchQuery({ type, repo, author, beginDate, endDate }) {
   let query = ''
   if (type) query += `+type:${type}`
   if (repo) query += `+repo:${repo}`
   if (author) query += `+author:${author}`
-  if (assignee) query += `+assignee:${assignee}`
   if (beginDate && endDate) query += `+created:${beginDate}..${endDate}`
   if (query[0] === '+') query.slice(1, -1)
   return query

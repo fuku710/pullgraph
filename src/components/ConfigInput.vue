@@ -9,7 +9,7 @@
       <button @click="$emit('clickAddRepo')">追加</button>
       <div v-for="(repo, index) in repos" :key="index">
         <input
-          :value="repo"
+          :value="repo.name"
           @input="e => $emit('inputRepo', e.target.value, index)"
         />
         <button @click="$emit('clickRemoveRepo', index)">X</button>
