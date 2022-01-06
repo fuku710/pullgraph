@@ -23,7 +23,7 @@
     "electron-store": "^5.1.1",
     "express": "^4.17.1",
     "node-fetch": "^2.6.0",
-    "parse-link-header": "^1.0.1",
+    "parse-link-header": "^2.0.0",
     "vue": "^2.6.11",
     "vue-chartjs": "^3.5.0",
     "webpack": "^4.42.1",
