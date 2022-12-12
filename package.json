@@ -21,7 +21,7 @@
     "core-js": "^3.6.4",
     "electron": "^8.5.2",
     "electron-store": "^5.1.1",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "node-fetch": "^2.6.0",
     "parse-link-header": "^1.0.1",
     "vue": "^2.6.11",
